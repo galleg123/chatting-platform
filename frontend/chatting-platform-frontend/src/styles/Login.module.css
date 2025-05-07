@@ -1,0 +1,17 @@
+.error {
+    color: red;
+    margin-top: 1rem;
+}
+
+.toggleButton {
+    margin-top: 1rem;
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.toggleButton:hover {
+    color: #0056b3;
+}

@@ -1,0 +1,17 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #4A90E2;
+    color: white;
+    font-size: 1em;
+}
+
+.username {
+    font-weight: bold;
+}
+
+.platform-name {
+    font-style: italic;
+}

@@ -1,0 +1,36 @@
+/* Reset some default styles */
+body, html, #root {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+    width: 100vw; /* Full viewport width */
+}
+
+.app-body {
+    display: flex;
+    flex: 1; /* Take up the remaining space below the header */
+    overflow: hidden; /* Prevent content overflow */
+}
+
+.sidebar {
+    
+    background-color: #f4f4f4;
+    border-right: 1px solid #ddd;
+    overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+.chat {
+    padding: 10px;
+    flex: 1; /* Take up the remaining horizontal space */
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Allow scrolling for chat messages */
+}
