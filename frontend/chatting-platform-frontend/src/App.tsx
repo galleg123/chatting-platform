@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar';
 import Chat from './components/Chat';
 import { useChatrooms } from './hooks/useChatrooms';
 import { useSignalR } from './hooks/useSignalR';
+import { useUser } from './hooks/useUser';
 import './styles/App.css';
 
 const App = () => {
@@ -14,11 +15,12 @@ const App = () => {
     
     const {chatrooms, createChatroom, joinChatroom} = useChatrooms(user);
     const hubConnection = useSignalR(user);
-
+    const {colorChange} = useUser(user);
+    
     const handleSelectChatroom = (chatroom: Chatroom) => {
         setSelectedChatroom(chatroom);
     };
-
+    
     const onLogin = (user: User) => {
         setUser(user);
     };
@@ -31,7 +33,7 @@ const App = () => {
     return (
         <div className="app-container">
             <header className="app-header">
-                <Header username={user.username} platformName="Chatting Platform" />
+                <Header username={user.username} platformName="Chatting Platform" onColorChange={colorChange} />
             </header>
             <div className="app-body">
                 <div className="sidebar">

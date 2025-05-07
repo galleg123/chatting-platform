@@ -35,7 +35,7 @@ const Chat: React.FC<ChatProps> = ({ selectedChatroom, hubConnection, user}) => 
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     chatroomId: selectedChatroom.id, // Send the chatroom ID
-                    senderName: user.username, // The sender's username
+                    senderId: user.id, // The sender's username
                     messageText, // The message text
                 }),
             });
@@ -53,14 +53,7 @@ const Chat: React.FC<ChatProps> = ({ selectedChatroom, hubConnection, user}) => 
 
             hubConnection.invoke('JoinChatroom', selectedChatroom.id.toString());
 
-            hubConnection.on('ReceiveMessage', (senderName: string, messageText: string) => {
-                const newMessage: Message = {
-                    id: Date.now(),
-                    chatroomId: selectedChatroom.id,
-                    senderName,
-                    messageText,
-                    timestamp: new Date(),
-                };
+            hubConnection.on('ReceiveMessage', (newMessage: Message) => {
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
             });
 
@@ -80,9 +73,13 @@ const Chat: React.FC<ChatProps> = ({ selectedChatroom, hubConnection, user}) => 
             <div className={styles.chatName}>{selectedChatroom ? selectedChatroom.name : 'Select a chatroom'}</div>
             <div className={styles.messages}>
                 {messages.map((message) => (
-                    <div key={message.id} className={styles.message}>
-                        <span className={styles.username}>{message.senderName}:</span>
-                        <span className={styles.text}>{message.messageText}</span>
+                    <div key={message.id} className={`${styles.message} ${message.sender.username === user.username ? styles.myMessage : ''}`}>
+                        <span 
+                            className={styles.username} 
+                            style={{color: message.sender.color}}>
+                            {message.sender.username}:
+                        </span>
+                        <span className={styles.text} style={{backgroundColor: message.sender.color}}>{message.messageText}</span>
                     </div>
                 ))}
             </div>

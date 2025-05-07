@@ -28,8 +28,20 @@ namespace Chatting_Service_Backend.Data
 
             // Configure the Messages table
             modelBuilder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany(u => u.Messages)
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<Message>()
                 .HasOne(m => m.Chatroom)
                 .WithMany(c => c.Messages)
+                .HasForeignKey(m => m.ChatroomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Chat>()
+                .HasMany(c => c.Messages)
+                .WithOne(m => m.Chatroom)
                 .HasForeignKey(m => m.ChatroomId)
                 .OnDelete(DeleteBehavior.Cascade);
         }

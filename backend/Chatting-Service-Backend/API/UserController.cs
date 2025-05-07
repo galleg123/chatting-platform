@@ -47,22 +47,26 @@ namespace Chatting_Service_Backend.API
 
             return Ok(existingUser);
         }
-        [HttpPut("chat/add/{id}")]
-        public async Task<IActionResult> AddChatroom(int id, [FromBody] int chatroomId)
+
+        public class UpdateColorRequest{
+            public required string Color { get; set; }
+        }
+
+        [HttpPut("color/{id}")]
+        public async Task<IActionResult> UpdateColor(int id, [FromBody] UpdateColorRequest request)
         {
             // Find the user by ID
             var user = await _db.Users.FindAsync(id);
             if (user == null)
             {
-                return NotFound("User not found."); 
+                return NotFound("User not found.");
             }
 
-            // Add the chatroom ID to the user's list of chatrooms
-            user.Chatrooms.Add(chatroomId);
+            // Update the user's color
+            user.Color = request.Color;
             await _db.SaveChangesAsync();
 
-            return Ok("Chatroom added successfully.");
+            return Ok(user);
         }
-
     }
 }

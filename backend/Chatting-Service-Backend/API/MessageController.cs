@@ -26,18 +26,30 @@ namespace Chatting_Service_Backend.API
             var messages = await _db.Messages
                 .Where(m => m.ChatroomId == chatroomId)
                 .OrderBy(m => m.Timestamp) // Order messages by timestamp
+                .Include(m => m.Sender) // Include sender information
                 .ToListAsync();
 
-            return Ok(messages);
+            var messageDTOs = messages.Select(m => new MessageDTO
+            {
+                Id = m.Id,
+                MessageText = m.MessageText,
+                Timestamp = m.Timestamp,
+                ChatroomId = m.ChatroomId,
+                Sender = m.Sender != null ? new UserDTO{
+                    Username = m.Sender.Username,
+                    Color = m.Sender.Color,
+                } : null
+            }).ToList();
+            return Ok(messageDTOs);
         }
 
         // Add a new message to a chatroom
         [HttpPost]
         public async Task<IActionResult> AddMessage([FromBody] Message message, [FromServices] IHubContext<ChatHub> chatHub)
         {
-            if (string.IsNullOrWhiteSpace(message.SenderName) || string.IsNullOrWhiteSpace(message.MessageText))
+            if (message.SenderId <= 0 || string.IsNullOrWhiteSpace(message.MessageText))
             {
-                return BadRequest("SenderName and MessageText are required.");
+                return BadRequest("SenderId and MessageText are required.");
             }
 
             var chatroom = await _db.Chats.FindAsync(message.ChatroomId);
@@ -46,23 +58,32 @@ namespace Chatting_Service_Backend.API
                 return NotFound("Chatroom not found.");
             }
 
+            var sender = await _db.Users.FindAsync(message.SenderId);
+            if (sender == null)
+            {
+                return NotFound("Sender not found.");
+            }
+
             // Add the message to the database
             _db.Messages.Add(message);
             await _db.SaveChangesAsync();
 
             // Notify all clients in the chatroom about the new message
-            await chatHub.Clients.Group(message.ChatroomId.ToString())
-                .SendAsync("ReceiveMessage", message.SenderName, message.MessageText);
 
             // Convert the Message object to a MessageDTO
             var messageDto = new MessageDTO
             {
                 Id = message.Id,
-                SenderName = message.SenderName,
                 MessageText = message.MessageText,
                 Timestamp = message.Timestamp,
+                Sender = new UserDTO{
+                    Username = sender.Username,
+                    Color = sender.Color,
+                },
                 ChatroomId = message.ChatroomId
             };
+            await chatHub.Clients.Group(message.ChatroomId.ToString())
+                .SendAsync("ReceiveMessage", messageDto);
 
             return CreatedAtAction(nameof(GetMessagesForChatroom), new { chatroomId = message.ChatroomId }, messageDto);
         }

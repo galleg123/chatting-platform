@@ -23,18 +23,29 @@
 }
 
 .message {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Default alignment to the left */
     margin-bottom: 10px;
 }
 
-.message .username {
-    font-weight: bold;
-    color: #007bff;
+.myMessage {
+    align-items: flex-start; /* Align to the right for the current user's messages */
 }
 
-.message .text {
-    margin-left: 10px;
-    color: #333;
+.username {
+    font-weight: bold;
+    margin-bottom: 5px;
 }
+
+.text {
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    word-wrap: break-word;
+    color: #fff; /* White text for better contrast */
+}
+
 
 .inputContainer {
     margin-top: 10px;

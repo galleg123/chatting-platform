@@ -47,35 +47,40 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
     return (
         <div className={styles.loginContainer}>
-            <h2>{isRegistering ? 'Register' : 'Login'}</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Username:</label>
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                {error && <p className={styles.error}>{error}</p>}
-                <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>
-            </form>
-            <button
-                className={styles.toggleButton}
-                onClick={() => setIsRegistering(!isRegistering)}
-            >
-                {isRegistering ? 'Already have an account? Login' : 'Don’t have an account? Register'}
-            </button>
+            <div className={styles.loginBox}>
+                <h2>{isRegistering ? 'Register' : 'Login'}</h2>
+                <form onSubmit={handleSubmit}>
+                    <div>
+                        <label>Username:</label>
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label>Password:</label>
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    {error && <p className={styles.error}>{error}</p>}
+                    <div className={styles.buttonContainer}>
+                        <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>
+                        <button
+                            type="button"
+                            className={styles.toggleButton}
+                            onClick={() => setIsRegistering(!isRegistering)}
+                        >
+                            {isRegistering ? 'Have an account?' : 'Don’t have an account?'}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 };

@@ -6,14 +6,20 @@ export interface Chatroom {
 
 export interface Message {
     id: number;
-    senderName: string;
     messageText: string;
     timestamp: Date;
+    sender: UserResponse;
     chatroomId: number;
 }
 
+export interface UserResponse {
+    username: string;
+    color: string;
+}    
+
 export interface User {
     id: number;
+    color: string;
     username: string;
     password: string;
     chatrooms: number[];
