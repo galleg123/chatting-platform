@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 
+
 // Add services to the container.
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -12,8 +13,10 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
         options.JsonSerializerOptions.WriteIndented = true; // Optional: Makes JSON output more readable
     });
+var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+Console.WriteLine($"Connection String: {connectionString}");
 builder.Services.AddDbContext<DatabaseConnector>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 builder.Services.AddSignalR(); // Add SignalR service
 
 // Add CORS policy to allow requests from the frontend
@@ -31,7 +34,15 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseConnector>();
+    dbContext.Database.Migrate(); // Apply any pending migrations
+}
+
+
 app.UseCors("AllowFrontend"); // Allow all origins for CORS
+app.Urls.Add("http://*:5062"); // Listen on all network interfaces on port 5062
 
 // Configure the HTTP request pipeline.
 app.UseRouting();
